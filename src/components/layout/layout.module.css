@@ -1,0 +1,28 @@
+.Layout {
+    width: 100%;
+    height: calc(100vh - 75px);
+    min-height: calc(100vh - 75px);
+}
+
+.flex {
+    display: flex;
+    height: 100%;
+}
+
+.fg4 {
+    flex-grow: 4;
+    background-color: #cecece;
+}
+
+.fg8 {
+    flex-grow: 8;
+}
+
+.border {
+    width: 2px;
+    background-color: black;
+}
+
+.header {
+    display: block;
+}
