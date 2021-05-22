@@ -1,0 +1,23 @@
+.icon {
+    color: #2b5278;
+    cursor: pointer;
+  }
+
+.messageField__container {
+    height: calc(100vh - 123px);
+    overflow-y: scroll;
+    display: flex;
+    flex-direction: column;
+}
+
+.fg1 {
+    flex-grow: 1;
+}
+
+.messageField__container::-webkit-scrollbar {
+    width: 0;
+  }
+
+  .styled__input {
+      color: #000 !important;
+  }
