@@ -1,17 +1,15 @@
+import "./global.css"
+import { MuiThemeProvider } from "@material-ui/core"
 import React from "react"
 import ReactDOM from "react-dom"
-import Layout from './components/layout/layout'
+import { BrowserRouter } from "react-router-dom"
+import { Router } from "./components/router/router"
 
-const app = () => (
-  <Layout/>
+ReactDOM.render(
+  <BrowserRouter>
+    <MuiThemeProvider>
+      <Router />
+    </MuiThemeProvider>
+  </BrowserRouter>,
+  document.getElementById("root"),
 )
-
-
-const render = () => {
-  ReactDOM.render(
-    app(),
-    document.getElementById("root"),
-  )
-}
-
-render()

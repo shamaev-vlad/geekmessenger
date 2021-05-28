@@ -1,31 +1,26 @@
-/* eslint-disable react/jsx-no-undef */
-/* eslint-disable import/no-default-export */
-import AppBar from '@material-ui/core/AppBar'
-import Toolbar from '@material-ui/core/Toolbar'
-import Typography from '@material-ui/core/Typography'
-import React from 'react'
-import { ChatList } from '../chat-list/chat-list'
-import MessageField from '../message-field/message-field'
-import classes from './layout.module.css'
+import PropTypes from "prop-types"
+import React, { Component } from "react"
+import styles from "./layout.module.css"
 
-function Layout() {
-  return (
-    <div className={classes.Layout}>
-      <AppBar  position="static">
-        <Toolbar>
-          <Typography variant="h6">Chat</Typography>
-        </Toolbar>
-      </AppBar>
-    <div className={classes.flex}>
-    
-    <div className={classes.fg4}> <ChatList/> </div>
-    <div className={classes.border} />
-    <div className={classes.fg8} >
-    <MessageField/>
-    </div>
-    </div>
-    </div>
-  )
+export class Layout extends Component {
+  static propTypes = {
+    header: PropTypes.node.isRequired,
+    chats: PropTypes.node.isRequired,
+    children: PropTypes.node,
+  }
+
+  render() {
+    const { header, chats, children } = this.props
+
+    return (
+      <div className={styles.body}>
+        <div className={styles.header}>{header}</div>
+
+        <div className={styles.content}>
+          <div className={styles.chats}>{chats}</div>
+          <div className={styles.messages}>{children}</div>
+        </div>
+      </div>
+    )
+  }
 }
-
-export default Layout
