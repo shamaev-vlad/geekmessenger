@@ -1,0 +1,16 @@
+.header {
+  height: 70px;
+}
+
+.header__right {
+  position: absolute;
+  right: 0;
+  display: flex;
+  justify-content: space-between;
+  margin: 15px 15px 0 0;
+  width: 250px;
+}
+
+.btn__link {
+  text-decoration: none;
+}
