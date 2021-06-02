@@ -1,35 +1,47 @@
-/* eslint-disable react/prop-types */
 import { List } from "@material-ui/core"
-import React, { Component } from "react"
+import PropTypes from "prop-types"
+import React from "react"
+import { connect } from "react-redux"
 import { Link } from "react-router-dom"
-import { Chat } from "./chat"
+import { ChatItem } from "./chat"
+import Styles from "./chatList.module.css"
 
-export class ChatList extends Component {
-  render() {
-    const {
-      conversations,
-      allMessages,
-      match: { params },
-    } = this.props
+const ChatListView = ({ match, conversations, messages }) => {
+  const chatId = match?.params.id || ""
 
-    const chatId = params.roomId
+  const lastMessage = (chat) => {
+    const message = messages[chat.title] || []
+    return message[message.length - 1]
+  }
 
-    return (
-      <List component="nav">
-        {conversations.map((chat) => {
-          const currentMessage = allMessages[chat.title]
-
-          return (
+  return (
+    <div className={Styles.chatList}>
+      <div>
+        <List component="nav">
+          {conversations.map((chat) => (
             <Link key={chat.title} to={`/chat/${chat.title}`}>
-              <Chat
-                selected={chat.title === chatId}
-                chat={chat}
-                lastMessage={currentMessage[currentMessage.length - 1]}
+              <ChatItem
+                title={chat.title}
+                selected={chatId === chat.title}
+                lastMessage={lastMessage(chat)}
               />
             </Link>
-          )
-        })}
-      </List>
-    )
-  }
+          ))}
+        </List>
+      </div>
+    </div>
+  )
 }
+
+ChatListView.propTypes = {
+  match: PropTypes.object.isRequired,
+  conversations: PropTypes.array.isRequired,
+  messages: PropTypes.object.isRequired,
+}
+
+const mapStateToProps = (state) => ({
+  conversations: state.conversationsReducer,
+  messages: state.messagesReducer,
+})
+
+export const ChatList = connect(mapStateToProps)(ChatListView)

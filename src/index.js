@@ -1,12 +1,16 @@
-import "./global.css"
 import React from "react"
 import ReactDOM from "react-dom"
+import "./global.css"
+import { Provider } from "react-redux"
 import { BrowserRouter } from "react-router-dom"
-import { Router } from "./components/router/router"
+import { App } from "./App"
+import { store } from "./store"
 
 ReactDOM.render(
   <BrowserRouter>
-    <Router />
+    <Provider store={store}>
+      <App />
+    </Provider>
   </BrowserRouter>,
   document.getElementById("root"),
 )

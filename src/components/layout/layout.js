@@ -1,26 +1,17 @@
 import PropTypes from "prop-types"
-import React, { Component } from "react"
-import styles from "./layout.module.css"
+import React from "react"
+import Styles from "./layout.module.css"
 
-export class Layout extends Component {
-  static propTypes = {
-    header: PropTypes.node.isRequired,
-    chats: PropTypes.node.isRequired,
-    children: PropTypes.node,
-  }
+export const Main = (props) => {
+  return (
+    <>
+      <header className={Styles.header}>{props.header}</header>
+      <main className={Styles.main}>{props.children}</main>
+    </>
+  )
+}
 
-  render() {
-    const { header, chats, children } = this.props
-
-    return (
-      <div className={styles.body}>
-        <div className={styles.header}>{header}</div>
-
-        <div className={styles.content}>
-          <div className={styles.chats}>{chats}</div>
-          <div className={styles.messages}>{children}</div>
-        </div>
-      </div>
-    )
-  }
+Main.propTypes = {
+  header: PropTypes.node.isRequired,
+  children: PropTypes.node.isRequired,
 }

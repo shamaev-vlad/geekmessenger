@@ -71,6 +71,13 @@ module.exports = {
         exclude: /node_modules/,
         use: "babel-loader",
       },
+      {
+        test: /\.(jpe?g|png|gif|svg)$/i,
+        loader: "file-loader",
+        options: {
+          name: isDevelopment ? "" : "/public/assets/[name].[ext]",
+        },
+      },
     ],
   },
   resolve: {
@@ -78,6 +85,7 @@ module.exports = {
     extensions: [".js", ".jsx"],
     alias: {
       "@app": path.resolve(__dirname, "src/"),
+      "@assets": path.resolve(__dirname, "public/assets/"),
       "@store": path.resolve(__dirname, "src/store/"),
       "@components": path.resolve(__dirname, "src/components/"),
       "@utils": path.resolve(__dirname, "src/utils/"),
