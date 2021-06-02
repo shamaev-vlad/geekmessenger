@@ -1,83 +1,122 @@
-/* eslint-disable react/prop-types */
-import { InputAdornment, Input, withStyles } from "@material-ui/core"
-import { Send } from "@material-ui/icons"
-import classnames from "classnames"
-import React, { Component, createRef } from "react"
-import { Message } from "./message"
-import styles from "./message-list.module.css"
-import { MessagesNotFound } from "./messages-not-found/messages-not-found"
+import { nanoid } from "nanoid"
+import PropTypes from "prop-types"
+import React, { createRef, useEffect } from "react"
+import { connect } from "react-redux"
+import { StyledInput, Message, MessagesNotFound } from "../../components"
+import { sendMessage, changeValue } from "../../store"
+import Styles from "./message-list.module.css"
 
-const StyledInput = withStyles(() => ({
-  root: {
-    "&": {
-      color: "#9a9fa1",
-      padding: "10px 15px",
-      fontSize: " 15px",
-    },
-  },
-}))(Input)
-export class MessageList extends Component {
-  ref = createRef()
+export const MessageListView = (props) => {
+  const { messages, value } = props
 
-  handleChangeInput = (e) => {
-    this.props.handleChangeValue(e)
+  const inputRef = createRef()
+  const scrollRef = createRef()
+
+  const setInputFocus = (ref) => {
+    return ref.current && ref.current.focus()
   }
 
-  handlePressInput = ({ code }) => {
-    if (code === "Enter") {
-      this.handleSendMessage()
+  const handleEvent = ({ type, code, target }) => {
+    switch (type) {
+      case "change":
+        return handleChangeInput(target?.value || "")
+      case "keypress":
+        return handlePressInput(code)
+      case "click":
+        return handleSendMessage()
+      default:
+        return console.warn(`No case for event type ${type}`)
     }
   }
 
-  handleSendMessage = () => {
-    const { sendMessage, value } = this.props
-
-    sendMessage({ author: "User", message: value })
-  }
-
-  handleScrollBottom = () => {
-    if (this.ref.current) {
-      this.ref.current.scrollTo(0, this.ref.current.scrollHeight)
+  const handlePressInput = (code) => {
+    if (code === "Enter" || code === "NumpadEnter") {
+      handleSendMessage()
     }
   }
 
-  componentDidUpdate() {
-    this.handleScrollBottom()
+  const handleChangeInput = (value) => {
+    const { changeValue, match } = props
+    const { id } = match.params
+
+    changeValue(id, value)
   }
 
-  render() {
-    const { messages, value } = this.props
+  const handleSendMessage = () => {
+    const { sendMessage, value, match } = props
+    const { id } = match.params
 
-    return (
-      <>
-        <div ref={this.ref}>
-          {!messages.length ? (
-            <MessagesNotFound />
-          ) : (
-            messages.map((message, index) => (
-              <Message message={message} key={index} />
-            ))
-          )}
-        </div>
+    sendMessage({ author: "User", message: value, roomId: id })
 
-        <StyledInput
-          fullWidth={true}
-          placeholder="Введите сообщение..."
-          value={value}
-          onChange={this.handleChangeInput}
-          onKeyPress={this.handlePressInput}
-          endAdornment={
-            <InputAdornment position="end">
-              {value && (
-                <Send
-                  className={classnames(styles.icon)}
-                  onClick={this.handleSendMessage}
-                />
-              )}
-            </InputAdornment>
-          }
-        />
-      </>
-    )
+    handleChangeInput()
+  }
+
+  const handleScrollBottom = () => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollTo(0, scrollRef.current.scrollHeight)
+    }
+  }
+
+  // TODO удалить добавление id
+  const withMessageId = () => {
+    return messages.map((message) => {
+      message = { ...message, id: nanoid() }
+      return message
+    })
+  }
+
+  useEffect(() => {
+    setInputFocus(inputRef)
+    handleScrollBottom()
+  })
+
+  return (
+    <div className={Styles.messages}>
+      <div ref={scrollRef}>
+        {!withMessageId().length ? (
+          <MessagesNotFound />
+        ) : (
+          withMessageId().map((message) => (
+            <Message message={message} key={message.id} />
+          ))
+        )}
+      </div>
+
+      <StyledInput
+        inputRef={inputRef}
+        handleEvent={handleEvent}
+        value={value}
+      />
+    </div>
+  )
+}
+
+MessageListView.propTypes = {
+  changeValue: PropTypes.func,
+  sendMessage: PropTypes.func,
+  messages: PropTypes.array,
+  value: PropTypes.string,
+  match: PropTypes.object,
+}
+
+const mapStateToProps = (state, props) => {
+  const { id } = props.match.params
+
+  return {
+    messages: state.messagesReducer[id] || [],
+    value:
+      state.conversationsReducer.find(
+        (conversation) => conversation.title === id,
+      )?.value || "",
   }
 }
+
+const mapDispatchToProps = (dispatch) => ({
+  sendMessage: (params) => dispatch(sendMessage(params)),
+  changeValue: (id, value) => dispatch(changeValue(id, value)),
+})
+
+export const MessageList = connect(
+  mapStateToProps,
+  mapDispatchToProps,
+)(MessageListView)
