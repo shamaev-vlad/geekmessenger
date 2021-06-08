@@ -2,7 +2,7 @@ import PropTypes from "prop-types"
 import React from "react"
 import Styles from "./layout.module.css"
 
-export const Main = (props) => {
+export const Layout = (props) => {
   return (
     <>
       <header className={Styles.header}>{props.header}</header>
@@ -11,7 +11,7 @@ export const Main = (props) => {
   )
 }
 
-Main.propTypes = {
+Layout.propTypes = {
   header: PropTypes.node.isRequired,
   children: PropTypes.node.isRequired,
 }

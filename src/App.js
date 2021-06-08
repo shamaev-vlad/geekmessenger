@@ -1,7 +1,7 @@
 import React from "react"
 import { Route, Switch } from "react-router-dom"
 import { Header } from "./components"
-import { Main as MainLayout } from "./components/layout"
+import { Layout as MainLayout } from "./components/layout"
 import { Profile } from "./components/profile/profile"
 import { Chat, Home } from "./pages"
 

@@ -8,6 +8,7 @@ import { AccountCircle } from "@material-ui/icons"
 import { format } from "date-fns"
 import PropTypes from "prop-types"
 import React from "react"
+
 import styles from "./chat.module.css"
 
 const StyledListItem = withStyles(() => ({
@@ -21,9 +22,9 @@ const StyledListItem = withStyles(() => ({
   },
 }))(ListItem)
 
-export const ChatItem = ({ selected, title, lastMessage }) => {
+export const ChatItem = ({ selected, title, lastMessage, handleNavigate }) => {
   return (
-    <StyledListItem button={true} selected={selected}>
+    <StyledListItem button={true} selected={selected} onClick={handleNavigate}>
       <ListItemIcon>
         <AccountCircle fontSize="large" className={styles.icon} />
       </ListItemIcon>
@@ -52,4 +53,5 @@ ChatItem.propTypes = {
   title: PropTypes.string.isRequired,
   selected: PropTypes.bool.isRequired,
   lastMessage: PropTypes.any,
+  handleNavigate: PropTypes.func.isRequired,
 }
