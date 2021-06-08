@@ -1,3 +1,4 @@
+import { createReducer } from "../create-reducer"
 import { ADD_CONVERSATION, CHANGE_VALUE } from "./types"
 
 const initialState = [
@@ -6,18 +7,13 @@ const initialState = [
   { title: "room3", value: "" },
 ]
 
-export const conversationsReducer = (
-  state = initialState,
-  { type, payload },
-) => {
-  switch (type) {
-    case ADD_CONVERSATION:
-      return [...state, { title: payload, value: "" }]
-    case CHANGE_VALUE:
-      return state.map((room) =>
-        room.title === payload.id ? { ...room, value: payload.value } : room,
-      )
-    default:
-      return state
-  }
-}
+export const conversationsReducer = createReducer(initialState, {
+  [ADD_CONVERSATION]: (state, { payload }) => {
+    return [...state, { title: payload, value: "" }]
+  },
+  [CHANGE_VALUE]: (state, { payload }) => {
+    return state.map((room) =>
+      room.title === payload.id ? { ...room, value: payload.value } : room,
+    )
+  },
+})
