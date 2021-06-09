@@ -31,10 +31,23 @@ module.exports = {
       title: "messenger",
       template: path.resolve(__dirname, "public/index.html"),
       inject: true,
+      templateParameters(compilation, assets, options) {
+        return {
+          compilation,
+          webpack: compilation.getStats().toJson(),
+          webpackConfig: compilation.options,
+          htmlWebpackPlugin: {
+            files: assets,
+            options,
+          },
+          process,
+        }
+      },
       minify: {
         removeComments: !isDevelopment,
         removeAttributeQuotes: !isDevelopment,
       },
+      nodeModules: false,
     }),
     new MiniCssExtractPligin({
       filename: `./css/${getFileName("css")}`,
@@ -88,7 +101,6 @@ module.exports = {
       "@assets": path.resolve(__dirname, "public/assets/"),
       "@store": path.resolve(__dirname, "src/store/"),
       "@components": path.resolve(__dirname, "src/components/"),
-      "@utils": path.resolve(__dirname, "src/utils/"),
     },
   },
   devServer: {
