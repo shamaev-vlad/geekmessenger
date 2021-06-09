@@ -4,6 +4,8 @@ import { combineReducers, createStore, applyMiddleware, compose } from "redux"
 import { composeWithDevTools } from "redux-devtools-extension"
 import { persistReducer, persistStore } from "redux-persist"
 import storage from "redux-persist/lib/storage"
+import thunk from "redux-thunk"
+import { request } from "../api"
 import { conversationsReducer } from "./conversations"
 import { messagesReducer } from "./messages"
 import { botMessage, logger } from "./middlewares"
@@ -26,7 +28,12 @@ export const store = createStore(
   ),
   compose(
     composeWithDevTools(
-      applyMiddleware(routerMiddleware(history), botMessage, logger),
+      applyMiddleware(
+        thunk.withExtraArgument(request),
+        routerMiddleware(history),
+        botMessage,
+        logger,
+      ),
     ),
   ),
 )

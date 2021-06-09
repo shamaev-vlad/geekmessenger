@@ -1,13 +1,12 @@
-import { nanoid } from "nanoid"
 import PropTypes from "prop-types"
-import React, { createRef, useEffect } from "react"
+import React, { createRef, useEffect, useRef } from "react"
 import { connect } from "react-redux"
 import { StyledInput, Message, MessagesNotFound } from "../../components"
-import { sendMessage, changeValue } from "../../store"
+import { sendMessage, changeValue, getMessagesById } from "../../store"
 import Styles from "./message-list.module.css"
 
 export const MessageListView = (props) => {
-  const { messages, value } = props
+  const { messages, value, match, getMessagesById, state } = props
 
   const inputRef = createRef()
   const scrollRef = createRef()
@@ -57,28 +56,35 @@ export const MessageListView = (props) => {
     }
   }
 
-  // TODO удалить добавление id
-  const withMessageId = () => {
-    return messages.map((message) => {
-      message = { ...message, id: nanoid() }
-      return message
-    })
-  }
-
   useEffect(() => {
     setInputFocus(inputRef)
     handleScrollBottom()
   })
 
+  function usePrevious(value) {
+    const ref = useRef()
+    useEffect(() => {
+      ref.current = value
+    })
+    return ref.current
+  }
+
+  const { id } = match.params
+  const prevId = usePrevious(match.params.id)
+
+  useEffect(() => {
+    if (prevId !== id && !state.messagesReducer.messages[id]) {
+      getMessagesById(id)
+    }
+  }, [getMessagesById, id, prevId, state.messagesReducer.messages])
+
   return (
     <div className={Styles.messages}>
       <div ref={scrollRef}>
-        {!withMessageId().length ? (
+        {!messages().length ? (
           <MessagesNotFound />
         ) : (
-          withMessageId().map((message) => (
-            <Message message={message} key={message.id} />
-          ))
+          messages().map((message) => <Message message={message} key={index} />)
         )}
       </div>
 
@@ -97,15 +103,18 @@ MessageListView.propTypes = {
   messages: PropTypes.array,
   value: PropTypes.string,
   match: PropTypes.object,
+  getMessagesById: PropTypes.func,
+  state: PropTypes.object,
 }
 
 const mapStateToProps = (state, props) => {
   const { id } = props.match.params
 
   return {
+    state,
     messages: state.messagesReducer[id] || [],
     value:
-      state.conversationsReducer.find(
+      state.conversationsReducer.conversations.find(
         (conversation) => conversation.title === id,
       )?.value || "",
   }
@@ -114,6 +123,7 @@ const mapStateToProps = (state, props) => {
 const mapDispatchToProps = (dispatch) => ({
   sendMessage: (params) => dispatch(sendMessage(params)),
   changeValue: (id, value) => dispatch(changeValue(id, value)),
+  getMessagesById: (id) => dispatch(getMessagesById(id)),
 })
 
 export const MessageList = connect(
