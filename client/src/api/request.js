@@ -6,7 +6,7 @@ class Request {
     this.token = token
     this.request = withLogger(
       axios.create({
-        baseURL: process.env.baseURL || "http://localhost:5000",
+        baseURL: "http://localhost:5000",
         timeout: 1000,
       }),
     )
