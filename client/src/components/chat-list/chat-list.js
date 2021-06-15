@@ -3,7 +3,7 @@ import { push } from "connected-react-router"
 import PropTypes from "prop-types"
 import React, { useEffect } from "react"
 import { connect } from "react-redux"
-import { getConversations } from "../../store"
+import { getConversations } from "../../store/conversations"
 import { ChatItem } from "./chat"
 import Styles from "./chatList.module.css"
 
